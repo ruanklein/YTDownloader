@@ -1,8 +1,8 @@
 import * as Action from './actionTypes';
 
 const initialState = {
-    url: [],
-    download: false
+    data: [],
+    downloading: false
 };
 
 export default (state = initialState, action) => {
@@ -10,23 +10,28 @@ export default (state = initialState, action) => {
         case Action.UPDATE_URL:
             return { 
                 ...state, 
-                url: [...state.url, action.url]
+                data: [...state.data, action.data]
             };
         case Action.REMOVE_URL:
             return {
                 ...state,
-                url: state.url.filter((item, index) => action.index !== index)
+                data: state.data.filter((item, index) => action.index !== index)
             }
         case Action.CLEAN_URL:
             return {
                 ...state,
-                url: [] 
+                data: [] 
             };
         case Action.START_DOWNLOAD:
             return {
                 ...state,
-                download: true
-            };
+                downloading: true
+            }
+        case Action.FINISH_DOWNLOAD:
+            return {
+                ...state,
+                downloading: false
+            }
         default:
             return state;
     }

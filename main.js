@@ -1,5 +1,5 @@
-const { app, BrowserWindow } = require('electron');
-const serve                  = require('electron-serve');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const serve                           = require('electron-serve');
 
 const isDev   = process.env.NODE_ENV === 'development';
 const loadURL = serve({directory: 'build'});
@@ -45,3 +45,5 @@ app.on('activate', () => {
     if(mainWindow === null)
         createWindow();
 });
+
+ipcMain.on('Download', (event, arg) => console.log(`Electron request: ${JSON.stringify(arg)}`));

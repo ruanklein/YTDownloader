@@ -4,7 +4,7 @@ import {
     ListGroupItem,
     ListGroupItemHeading,
     ListGroupItemText,
-    Progress, Button
+    Progress, Button, Alert
 } from 'reactstrap';
 
 export default class List extends React.Component {
@@ -20,15 +20,38 @@ export default class List extends React.Component {
         return (
             <div>
                 <ListGroup>
-                    {this.props.url.map((url, index) => (
-                        <ListGroupItem key={index}>
-                            <ListGroupItemHeading>Video {index} <Button onClick={() => this.onRemoveItem(index)} close /></ListGroupItemHeading>
-                            <ListGroupItemText>
-                                Url: {url}
-                            </ListGroupItemText>
-                            <Progress animated color="info" value={2} />
-                        </ListGroupItem>
-                    ))}
+                    {this.props.data.map(({ url, progress, complete }, index) => {
+
+                        const showRemoveButton = !complete && !this.props.downloading;
+
+                        let content = (
+                            <ListGroupItem key={index}>
+                                <ListGroupItemHeading>
+                                    Video {index} {showRemoveButton && <Button onClick={() => this.onRemoveItem(index)} close />}
+                                    </ListGroupItemHeading>
+                                <ListGroupItemText>
+                                    Url: {url}
+                                </ListGroupItemText>
+                                {complete && <Alert color="primary">Completed! ;-)</Alert>}
+                            </ListGroupItem>
+                        );
+
+                        // Downloading
+                        if(progress > 0 && progress < 100)
+                            content = (
+                                <ListGroupItem key={index} active>
+                                    <ListGroupItemHeading>
+                                        Video {index}
+                                        </ListGroupItemHeading>
+                                    <ListGroupItemText>
+                                        Url: {url}
+                                    </ListGroupItemText>
+                                    <Progress animated color="danger" value={progress} max={100} />
+                                </ListGroupItem>
+                            );
+
+                        return content;
+                    })}
                 </ListGroup>
             </div>
         );

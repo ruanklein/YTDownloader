@@ -3,10 +3,13 @@ import Url from './Url';
 
 import { UPDATE_URL } from '../actionTypes';
 
-const mapStateToProps = state => ({ url: state.url });
+const mapStateToProps = state => ({ 
+    data: state.data,
+    downloading: state.downloading
+});
 
 const mapDispatchToProps = dispatch => ({
-    addUrl: url => dispatch({ type: UPDATE_URL, url })
+    addUrl: data => dispatch({ type: UPDATE_URL, data })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Url);
