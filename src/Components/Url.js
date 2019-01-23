@@ -26,17 +26,23 @@ export default class Url extends React.Component {
     onAddClick = () => {
 
         // No url
-        if(this.url.length < 1)
+        if(this.url.length < 1) {
             this.errors.push({
                 msg: 'Add URL(s) to start downloading!' 
             });
-        
-        // Invalid YouTube URL
-        if(this.url.length >= 1 &&
-           !this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/))
-            this.errors.push({
-                msg: 'Invalid YouTube URL!'
-            });
+        }
+        else {
+            // Invalid YouTube URL
+            if(!this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/))
+                this.errors.push({
+                    msg: 'Invalid YouTube URL!'
+                });
+            // Same url added
+            if(this.props.data.find(({ url }) => url === this.url))
+                this.errors.push({
+                    msg: 'This URL has already been included!'
+                });
+        }
 
         if(this.errors.length > 0) {
             this.setState({ errors : this.errors });
@@ -46,7 +52,8 @@ export default class Url extends React.Component {
         this.props.addUrl({ 
             url: this.url,
             progress: 0,
-            complete: false
+            complete: false,
+            error: false
         });
     };
 
