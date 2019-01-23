@@ -14,7 +14,9 @@ export default class Url extends React.Component {
         super(props);
 
         this.state = { errors: [] };
-        this.url = '';
+
+        this.url    = '';
+        this.errors = [];
 
         this.onAddClick     = this.onAddClick.bind(this);
         this.onBlur         = this.onBlur.bind(this);
@@ -23,15 +25,21 @@ export default class Url extends React.Component {
 
     onAddClick = () => {
 
-        let errors = [];
-
+        // No url
         if(this.url.length < 1)
-            errors.push({
+            this.errors.push({
                 msg: 'Add URL(s) to start downloading!' 
             });
+        
+        // Invalid YouTube URL
+        if(this.url.length >= 1 &&
+           !this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/))
+            this.errors.push({
+                msg: 'Invalid YouTube URL!'
+            });
 
-        if(errors.length > 0) {
-            this.setState({ errors });
+        if(this.errors.length > 0) {
+            this.setState({ errors : this.errors });
             return;
         }
 
@@ -44,9 +52,10 @@ export default class Url extends React.Component {
 
     onBlur = e => this.url = e.target.value;
 
-    onDismiss = index => this.setState({ 
-        errors: this.state.errors.filter((item, idx) => index !== idx) 
-    });
+    onDismiss = index => {
+        this.errors = this.errors.filter((item, idx) => index !== idx);
+        this.setState({ errors: this.errors });
+    };
 
     render() {
         return (
