@@ -74,7 +74,10 @@ ipcMain.on('YouTube:Info', (e, url) => ytdl.getBasicInfo(url, (err, info) => {
    }
 
    const { title, description, length_seconds } = info;
-   const filename = title.replace(/\s+/g, '_');
+   let filename = title.replace(/\s+/g, '_');
+
+   if(/["']/g.test(filename))
+    filename = filename.replace(/["']/g, '');
 
    data = {
         error: false,
