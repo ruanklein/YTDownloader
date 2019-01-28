@@ -1,5 +1,9 @@
-export const UPDATE_URL         = 'UPDATE_URL';
-export const REMOVE_URL         = 'REMOVE_URL';
-export const CLEAN_URL          = 'CLEAN_URL';
-export const START_DOWNLOAD     = 'START_DOWNLOAD';
-export const FINISH_DOWNLOAD    = 'FINISH_DOWNLOAD';
+export const UPDATE_URL             = 'UPDATE_URL';
+export const REMOVE_URL             = 'REMOVE_URL';
+export const CLEAN_URL              = 'CLEAN_URL';
+export const REMOVE_COMPLETED       = 'REMOVE_COMPLETED';
+export const DOWNLOAD_COMPLETE      = 'DOWNLOAD_COMPLETE';
+export const START_DATA_LOADING     = 'START_DATA_LOADING';
+export const FINISH_DATA_LOADING    = 'FINISH_DATA_LOADING';
+export const START_DOWNLOAD         = 'START_DOWNLOAD';
+export const FINISH_DOWNLOAD        = 'FINISH_DOWNLOAD';

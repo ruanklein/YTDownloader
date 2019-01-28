@@ -1,58 +1,115 @@
 import React from 'react';
-import { 
+import {
     ListGroup,
     ListGroupItem,
     ListGroupItemHeading,
     ListGroupItemText,
-    Progress, Button, Alert
+    Progress,
+    Button,
+    Alert,
+    Spinner
 } from 'reactstrap';
+
+const { ipcRenderer } = window.require('electron');
 
 export default class List extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = { progress: [] };
+
         this.onRemoveItem = this.onRemoveItem.bind(this);
+        this.onProgress = this.onProgress.bind(this);
     }
 
     onRemoveItem = idx => this.props.removeUrl(idx);
 
+    onProgress = data => {
+        data.array[data.index] = data.progress;
+        this.setState({ progress: data.array });
+
+        if(parseInt(data.progress) === 100)
+            this.props.downloadComplete(data.index);
+        
+        // Download complete
+        if(this.props.data.filter(({ complete }) => !complete).length < 1)
+            setTimeout(() => { 
+                this.props.finishDownload();
+                this.setState({ progress: [] });
+            }, 3000);
+    };
+
+    componentDidMount() {
+        let array = this.state.progress;
+        this.props.data.map(() => array.push(0));
+
+        if(array.length)
+            this.setState({ progress: array });
+
+        ipcRenderer.on('YouTube:Download:Progress', (e, index, progress) =>
+            this.onProgress({ index, progress, array }));
+    }
+
     render() {
         return (
             <div>
-                <ListGroup>
-                    {this.props.data.map(({ url, progress, complete }, index) => {
+                {this.props.dataLoading ? (
+                    <div className="App-Loading">
+                        <p>Loading video data...</p>
+                        <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" color="info" />
+                    </div>
+                    ) : (
+                    <ListGroup>
+                        {this.props.data.map(({ info, complete }, index) => {
 
-                        const showRemoveButton = !complete && !this.props.downloading;
+                            const { description, duration } = info;
+                            const { progress } = this.state;
 
-                        let content = (
-                            <ListGroupItem key={index}>
-                                <ListGroupItemHeading>
-                                    Video {index} {showRemoveButton && <Button onClick={() => this.onRemoveItem(index)} close />}
-                                    </ListGroupItemHeading>
-                                <ListGroupItemText>
-                                    Url: {url}
-                                </ListGroupItemText>
-                                {complete && <Alert color="primary">Completed! ;-)</Alert>}
-                            </ListGroupItem>
-                        );
+                            let { title } = info;
+                            let content;
 
-                        // Downloading
-                        if(progress > 0 && progress < 100)
-                            content = (
-                                <ListGroupItem key={index} active>
-                                    <ListGroupItemHeading>
-                                        Video {index}
-                                        </ListGroupItemHeading>
-                                    <ListGroupItemText>
-                                        Url: {url}
-                                    </ListGroupItemText>
-                                    <Progress animated color="danger" value={progress} max={100} />
-                                </ListGroupItem>
-                            );
+                            title = `(${duration}) ${title}`;
 
-                        return content;
-                    })}
-                </ListGroup>
+                            // Downloading
+                            if(this.props.downloading) {
+                                content = (
+                                    <div key={index}>
+                                        <ListGroupItem>
+                                            <ListGroupItemHeading>
+                                                {title}
+                                            </ListGroupItemHeading>
+                                            <ListGroupItemText>
+                                                {description}
+                                            </ListGroupItemText>
+                                            <Progress 
+                                                color="info"
+                                                value={progress[index]}
+                                                max={100}>
+                                            {progress[index] <= 100 && `${progress[index]}%`}
+                                            </Progress>
+                                        </ListGroupItem>
+                                    </div>
+                                );
+                            }
+                            // Normal
+                            else {
+                                content = (
+                                    <ListGroupItem key={index}>
+                                        <ListGroupItemHeading>
+                                            {title} {!complete && <Button onClick={() => this.onRemoveItem(index)} close />}
+                                            </ListGroupItemHeading>
+                                        <ListGroupItemText>
+                                            {description}
+                                        </ListGroupItemText>
+                                        {complete && <Alert color="primary">Completed! ;-)</Alert>}
+                                    </ListGroupItem>
+                                );
+                            }
+
+                            return content;
+                        })}
+                    </ListGroup>
+                )}
             </div>
         );
     }

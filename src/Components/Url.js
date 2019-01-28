@@ -8,86 +8,105 @@ import {
     Alert
 } from 'reactstrap';
 
+const { ipcRenderer } = window.require('electron');
+
 export default class Url extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = { errors: [] };
-
-        this.url    = '';
-        this.errors = [];
+        this.state = { error: '' };
+        this.url   = '';
 
         this.onAddClick     = this.onAddClick.bind(this);
         this.onBlur         = this.onBlur.bind(this);
         this.onDismiss      = this.onDismiss.bind(this);
     }
 
+    twiceUrl = () => this.props.data.find(({ url }) => url === this.url);
+
     onAddClick = () => {
 
-        // No url
-        if(this.url.length < 1) {
-            this.errors.push({
-                msg: 'Add URL(s) to start downloading!' 
-            });
-        }
-        else {
-            // Invalid YouTube URL
-            if(!this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/))
-                this.errors.push({
-                    msg: 'Invalid YouTube URL!'
-                });
-            // Same url added
-            if(this.props.data.find(({ url }) => url === this.url))
-                this.errors.push({
-                    msg: 'This URL has already been included!'
-                });
-        }
+        // Find completed download and remove
+        this.props.removeCompleted();
 
-        if(this.errors.length > 0) {
-            this.setState({ errors : this.errors });
+        // No URL
+        if(this.url.length < 1) {
+            this.setState({ error: 'Empty URL field!' });
             return;
         }
 
-        this.props.addUrl({ 
-            url: this.url,
-            progress: 0,
-            complete: false,
-            error: false
+        // Invalid YouTube URL
+        if(!this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/)) {
+            this.setState({ error: 'Invalid YouTube URL!' });
+            return;
+        }
+
+        // Same url added
+        if(this.twiceUrl()) {
+            this.setState({ error: 'This URL has already been added!' });
+            return;
+        }
+
+        // Get video info
+        this.props.startDataLoading();
+
+        ipcRenderer.send('YouTube:Info', this.url);
+        ipcRenderer.on('YouTube:Info:Data', (e, info) => {
+
+            if(this.twiceUrl()) return;
+
+            if(info.error) {
+                this.props.finishDataLoading();
+                this.setState({ error: 'Error to get video url!' });
+                return;
+            }
+
+            this.props.addUrl({
+                url: this.url,
+                complete: false,
+                info: info.info
+            });
+
+            this.props.finishDataLoading();
         });
     };
 
-    onBlur = e => this.url = e.target.value;
-
-    onDismiss = index => {
-        this.errors = this.errors.filter((item, idx) => index !== idx);
-        this.setState({ errors: this.errors });
+    onBlur = e =>  {
+        e.preventDefault(); 
+        this.url = e.target.value;
     };
+
+    onDismiss = () => this.setState({ error: '' });
 
     render() {
         return (
             <div>
                 {this.props.downloading ? (
-                    <div style={{ textAlign: 'center' }}>
+                    <div className="App-Loading">
                         <p>Downloading...</p>
                         <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" color="success" />
                     </div>
                     ) : (
                     <div>
-                        <InputGroup>
-                            <Input onBlur={this.onBlur} placeholder="https://youtu.be/..." />
-                            <InputGroupAddon addonType="append">
-                                <Button onClick={() => this.onAddClick()} color="success">Add</Button>
-                            </InputGroupAddon>
-                        </InputGroup>
-                        {this.state.errors.map(({ msg }, index) => (
+                        {!this.props.dataLoading && (
                             <div>
-                                <br />
-                                <Alert key={index} color="danger" isOpen={true} toggle={() => this.onDismiss(index)}>
-                                    {msg}
-                                </Alert>
+                                <InputGroup>
+                                    <Input onBlur={this.onBlur} placeholder="https://youtu.be/..." />
+                                    <InputGroupAddon addonType="append">
+                                        <Button onClick={() => this.onAddClick()} color="success">Add</Button>
+                                    </InputGroupAddon>
+                                </InputGroup>
+                                {this.state.error.length > 0 && (
+                                    <div>
+                                        <br />
+                                        <Alert color="danger" isOpen={true} toggle={() => this.onDismiss()}>
+                                            {this.state.error}
+                                        </Alert>
+                                    </div>
+                                )}
                             </div>
-                        ))}
+                        )}
                     </div>
                 )}
             </div>

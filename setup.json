@@ -1,0 +1,8 @@
+{
+    "authors"           :  ["Ruan K. F"],
+    "description"       :  "YouTube Downloader",
+    "productDescription":  "YTDownloader",
+    "src"               :  "dist/YTDownloader-win32-x64",
+    "dest"              :  "dist/setup",
+    "icon"              :  "res/icon.ico"
+}

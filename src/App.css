@@ -1,3 +1,7 @@
 .App {
   margin: 5%;
 }
+
+.App-Loading {
+  text-align: center;
+}
