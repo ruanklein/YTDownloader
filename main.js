@@ -52,17 +52,6 @@ ipcMain.on('YouTube:Info', (e, url) => ytdl.getBasicInfo(url, (err, info) => {
 
    const fmtTime = s => (s-(s %= 60)) / 60 + (9 < s ? ':' : ':0' ) + s;
 
-   // for mp3 conversion
-   // const makeTmpFile = () => {
-   //   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   //   let text = '';
-
-   //   for(let i = 0; i <= 8; i++)
-   //     text += possible.charAt(Math.floor(Math.random()*possible.length));
-
-   //    return text;
-   //  }
-
    let data = {
        error: true,
        info: {}
