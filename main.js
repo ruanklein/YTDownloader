@@ -1,7 +1,8 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { createWriteStream }           = require('fs');
-const serve                           = require('electron-serve');
-const ytdl                            = require('ytdl-core');
+const { app, BrowserWindow, ipcMain }   = require('electron');
+const fs                                = require('fs');
+const serve                             = require('electron-serve');
+const ytdl                              = require('ytdl-core');
+const ffmpeg                            = require('fluent-ffmpeg');
 
 const isDev   = process.env.NODE_ENV === 'development';
 const loadURL = serve({directory: 'build'});
@@ -79,7 +80,12 @@ ipcMain.on('YouTube:Info', (e, url) => ytdl.getBasicInfo(url, (err, info) => {
     })
 );
 
-ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info }, index) => {
+ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, index) => {
+        const localfile = format === 'mp4' ? 
+                          `${app.getPath('videos')}/${info.filename}.mp4` :
+                          `${app.getPath('temp')}/${info.filename}.mp4`;
+
+
         ytdl(url, { filter: ({ container }) => container === 'mp4' })
         .on('response', res => {
             const size = res.headers['content-length'];
@@ -91,6 +97,21 @@ ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info }, index) => {
                 e.sender.send('YouTube:Download:Progress', index, progress);
             });
         })
-        .pipe(createWriteStream(`${app.getPath('videos')}/${info.filename}.mp4`));
+        .on('end', () => {
+            if(format === 'mp3') {
+                const fileReader = fs.createReadStream(localfile);
+                ffmpeg(fileReader)
+                    .withNoVideo()
+                    .inputFormat('mp4')
+                    .audioCodec('libmp3lame')
+                    .audioBitrate(320)
+                    .format('mp3')
+                    .on('stderr', line => console.log(line))
+                    .on('error', err => console.log(`[${index}:ffmpeg] err: ${err}`))
+                    .on('end', () => fs.unlink(localfile, err => console.log(err)))
+                    .save(fs.createWriteStream(`${app.getPath('music')}/${info.filename}.mp3`));
+            }
+        })
+        .pipe(fs.createWriteStream(localfile));
     })
 );
