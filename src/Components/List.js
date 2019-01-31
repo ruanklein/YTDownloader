@@ -5,6 +5,7 @@ import {
     ListGroupItemHeading,
     ListGroupItemText,
     Progress,
+    Badge,
     Button,
     Alert,
     Spinner
@@ -60,7 +61,7 @@ export default class List extends React.Component {
                     </div>
                     ) : (
                     <ListGroup>
-                        {this.props.data.map(({ info, complete }, index) => {
+                        {this.props.data.map(({ info, complete, format }, index) => {
 
                             const { description, duration } = info;
                             const { progress } = this.state;
@@ -87,6 +88,7 @@ export default class List extends React.Component {
                                                 max={100}>
                                             {progress[index] <= 100 && `${progress[index]}%`}
                                             </Progress>
+                                            <Badge pill>{format}</Badge>
                                         </ListGroupItem>
                                     </div>
                                 );
@@ -94,7 +96,7 @@ export default class List extends React.Component {
                             // Normal
                             else {
                                 content = (
-                                    <ListGroupItem key={index}>
+                                    <ListGroupItem key={index} className="justify-content-between">
                                         <ListGroupItemHeading>
                                             {title} {!complete && <Button onClick={() => this.onRemoveItem(index)} close />}
                                             </ListGroupItemHeading>
@@ -102,6 +104,7 @@ export default class List extends React.Component {
                                             {description}
                                         </ListGroupItemText>
                                         {complete && <Alert color="primary">Completed! ;-)</Alert>}
+                                        <Badge pill>{format}</Badge>
                                     </ListGroupItem>
                                 );
                             }

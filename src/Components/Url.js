@@ -1,7 +1,11 @@
 import React from 'react';
-import { 
-    InputGroup,
-    InputGroupAddon,
+import {
+    InputGroup, 
+    InputGroupAddon, 
+    InputGroupButtonDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
     Button,
     Input,
     Spinner,
@@ -15,15 +19,24 @@ export default class Url extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { error: '' };
-        this.url   = '';
+        this.state = { 
+            error: '',
+            splitButtonShow: false,
+            selectedFormat: 'mp4'
+        };
+
+        this.url            = '';
+        this.formats        = ['mp4', 'mp3'];
 
         this.onAddClick     = this.onAddClick.bind(this);
         this.onBlur         = this.onBlur.bind(this);
         this.onDismiss      = this.onDismiss.bind(this);
+        this.onSelectFormat = this.onSelectFormat.bind(this);
     }
 
     twiceUrl = () => this.props.data.find(({ url }) => url === this.url);
+
+    toggleSplit = () => this.setState({ splitButtonShow: !this.state.splitButtonShow });
 
     onAddClick = () => {
 
@@ -65,11 +78,17 @@ export default class Url extends React.Component {
             this.props.addUrl({
                 url: this.url,
                 complete: false,
+                format: this.state.selectedFormat,
                 info: info.info
             });
 
             this.props.finishDataLoading();
         });
+    };
+
+    onSelectFormat = e => {
+        e.preventDefault();
+        this.state.selectedFormat = e.target.value;
     };
 
     onBlur = e =>  {
@@ -92,6 +111,24 @@ export default class Url extends React.Component {
                         {!this.props.dataLoading && (
                             <div>
                                 <InputGroup>
+                                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonShow} toggle={this.toggleSplit}>
+                                        <Button disabled outline>{this.state.selectedFormat.toUpperCase()}</Button>
+                                        <DropdownToggle split outline />
+                                        <DropdownMenu>
+                                            <DropdownItem header>Select output format</DropdownItem>
+                                            {this.formats.map((item, index) => ( 
+                                              <div key={index}>
+                                                  {item === this.state.selectedFormat ? 
+                                                    <DropdownItem disabled>{item.toUpperCase()}</DropdownItem> :
+                                                    <DropdownItem 
+                                                        value={item}
+                                                        onClick={this.onSelectFormat}>
+                                                            {item.toUpperCase()}
+                                                    </DropdownItem>}
+                                              </div>  
+                                            ))}
+                                        </DropdownMenu>
+                                    </InputGroupButtonDropdown>
                                     <Input onBlur={this.onBlur} placeholder="https://youtu.be/..." />
                                     <InputGroupAddon addonType="append">
                                         <Button onClick={() => this.onAddClick()} color="success">Add</Button>
