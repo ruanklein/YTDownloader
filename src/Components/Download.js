@@ -16,28 +16,33 @@ export default class Download extends React.Component {
         this.props.removeCompleted();
         this.props.startDownload();
         ipcRenderer.send('YouTube:Download', this.props.data);
-    }
+    };
 
     render() {
-
         const { data } = this.props;
-        let downloadButton = <div></div>;
 
-        if(data.length > 0) {
-            let array = data.filter((({ complete }) => !complete));
-            if(array.length > 0)
-                downloadButton = <Button onClick={() => this.onDownloadClick()} color="success" size="lg" block>Download</Button>;
-        }
+        let content = <div></div>;
+        let showDownloadButton = false;
 
-        return (
-            <div>
-                {!this.props.downloading && !this.props.dataLoading && this.props.data.length > 0 && (
+        if(!this.props.downloading
+           && !this.props.dataLoading
+           && data.length > 0) {
+               if(data.filter(({ complete }) => !complete).length > 0)
+                    showDownloadButton = true;
+                content = (
                     <div>
-                        {downloadButton}
+                        {showDownloadButton && <Button 
+                                                  onClick={() => this.onDownloadClick()}
+                                                  color="success"
+                                                  size="lg"
+                                                  block>
+                                                    Download
+                                                </Button>}
                         <Button onClick={() => this.onCleanClick()} color="info" size="lg" block>Clear</Button>
                     </div>
-                )}
-            </div>
-        );
+                );
+        }
+
+        return content;
     }
 }
