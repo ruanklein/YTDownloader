@@ -1,8 +1,7 @@
 const { app, BrowserWindow, ipcMain }   = require('electron');
-const fs                                = require('fs');
 const serve                             = require('electron-serve');
-const ytdl                              = require('ytdl-core');
-const ffmpeg                            = require('fluent-ffmpeg');
+
+const YouTube                           = require('./lib/YouTube');
 
 const isDev   = process.env.NODE_ENV === 'development';
 const loadURL = serve({directory: 'build'});
@@ -49,69 +48,30 @@ app.on('activate', () => {
         createWindow();
 });
 
-ipcMain.on('YouTube:Info', (e, url) => ytdl.getBasicInfo(url, (err, info) => {
+ipcMain.on('YouTube:Info', (e, url) => {
+    const ytConverter = new YouTube(e, { url });
+    ytConverter.getInfo();
+});
 
-   const fmtTime = s => (s-(s %= 60)) / 60 + (9 < s ? ':' : ':0' ) + s;
+ipcMain.on('YouTube:Download', (e, data) => {
 
-   let data = {
-       error: true,
-       info: {}
-   };
+    let ytConverter = [];
 
-   if(err) {
-       e.sender.send('YouTube:Info:Data', data);
-       return;
-   }
+    data.map(({ url, info, format }, index) => {
 
-   const { title, description, length_seconds } = info;
-   const filename = title.replace(/\s+/g, '_').replace(/\W/g, '');
-
-   data = {
-        error: false,
-        info: {
-            title: `${title.substring(0,50)} ...`,
-            description: `${description.substring(0,100)} ...`,
-            duration: fmtTime(length_seconds),
-            filename
-        }
-    };
-
-    e.sender.send('YouTube:Info:Data', data);
-    })
-);
-
-ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, index) => {
-        const localfile = format === 'mp4' ? 
-                          `${app.getPath('videos')}/${info.filename}.mp4` :
+        const audioFile = format === 'mp3' ? 
+                          `${app.getPath('downloads')}/${info.filename}.mp3` :
                           `${app.getPath('temp')}/${info.filename}.mp4`;
 
 
-        ytdl(url, { filter: ({ container }) => container === 'mp4' })
-        .on('response', res => {
-            const size = res.headers['content-length'];
-            let pos = 0;
+        ytConverter.push(new YouTube(e, {
+            url,
+            index,
+            format,
+            audioFile,
+            videoFile: `${app.getPath('downloads')}/${info.filename}.mp4`
+        }));
+    });
 
-            res.on('data', chunk => {
-                pos += chunk.length;
-                let progress = ((pos / size) * 100).toFixed(0);
-                e.sender.send('YouTube:Download:Progress', index, progress);
-            });
-        })
-        .on('end', () => {
-            if(format === 'mp3') {
-                const fileReader = fs.createReadStream(localfile);
-                ffmpeg(fileReader)
-                    .withNoVideo()
-                    .inputFormat('mp4')
-                    .audioCodec('libmp3lame')
-                    .audioBitrate(320)
-                    .format('mp3')
-                    .on('stderr', line => console.log(line))
-                    .on('error', err => console.log(`[${index}:ffmpeg] err: ${err}`))
-                    .on('end', () => fs.unlink(localfile, err => console.log(err)))
-                    .save(fs.createWriteStream(`${app.getPath('music')}/${info.filename}.mp3`));
-            }
-        })
-        .pipe(fs.createWriteStream(localfile));
-    })
-);
+    ytConverter.map(converter => converter.run());
+});

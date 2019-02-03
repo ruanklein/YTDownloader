@@ -4,7 +4,6 @@ const initialState = {
     data: [],
     downloading: false,
     dataLoading: false,
-    converting: false
 };
 
 export default (state = initialState, action) => {
@@ -62,6 +61,34 @@ export default (state = initialState, action) => {
                 ...state,
                 downloading: false
             };
+        case Action.TOGGLE_CONVERT: {
+            let array = state.data;
+            array.map((item, index) => {
+                if(action.index === index)
+                    array[index].converting = !array[index].converting;
+                return array;
+            });
+
+            return {
+                ...state,
+                data: array
+            };
+        }
+        case Action.ERROR_MESSAGE: {
+            let array = state.data;
+            array.map((item, index) => {
+                if(action.index === index) {
+                    array[index].error.status = true;
+                    array[index].error.message = action.message;
+                }
+                return array;
+            });
+
+            return {
+                ...state,
+                data: array
+            };
+        }
         default:
             return state;
     }

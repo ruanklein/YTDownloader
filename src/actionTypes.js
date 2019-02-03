@@ -7,3 +7,5 @@ export const START_DATA_LOADING     = 'START_DATA_LOADING';
 export const FINISH_DATA_LOADING    = 'FINISH_DATA_LOADING';
 export const START_DOWNLOAD         = 'START_DOWNLOAD';
 export const FINISH_DOWNLOAD        = 'FINISH_DOWNLOAD';
+export const TOGGLE_CONVERT         = 'TOGGLE_CONVERT';
+export const ERROR_MESSAGE          = 'ERROR_MESSAGE';

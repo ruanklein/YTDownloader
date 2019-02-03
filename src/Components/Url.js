@@ -29,16 +29,21 @@ export default class Url extends React.Component {
         this.formats        = ['mp4', 'mp3'];
 
         this.onAddClick     = this.onAddClick.bind(this);
-        this.onBlur         = this.onBlur.bind(this);
+        this.onUrlChanged   = this.onUrlChanged.bind(this);
         this.onDismiss      = this.onDismiss.bind(this);
         this.onSelectFormat = this.onSelectFormat.bind(this);
+        this.toggleSplit    = this.toggleSplit.bind(this);
     }
 
-    twiceUrl = () => this.props.data.find(({ url }) => url === this.url);
+    twiceUrl() { 
+        return this.props.data.find(({ url }) => url === this.url);
+    }
 
-    toggleSplit = () => this.setState({ splitButtonShow: !this.state.splitButtonShow });
+    toggleSplit() { 
+        this.setState({ splitButtonShow: !this.state.splitButtonShow });
+    }
 
-    onAddClick = () => {
+    onAddClick() {
 
         // Find completed download and remove
         this.props.removeCompleted();
@@ -79,24 +84,31 @@ export default class Url extends React.Component {
                 url: this.url,
                 complete: false,
                 format: this.state.selectedFormat,
-                info: info.info
+                converting: false,
+                info: info.info,
+                error: {
+                    status: false,
+                    message: ''
+                }
             });
 
             this.props.finishDataLoading();
         });
-    };
+    }
 
-    onSelectFormat = e => {
+    onSelectFormat(e) {
         e.preventDefault();
-        this.state.selectedFormat = e.target.value;
-    };
+        this.setState({ selectedFormat: e.target.value });
+    }
 
-    onBlur = e =>  {
+    onUrlChanged(e) {
         e.preventDefault(); 
         this.url = e.target.value;
-    };
+    }
 
-    onDismiss = () => this.setState({ error: '' });
+    onDismiss() { 
+        this.setState({ error: '' });
+    }
 
     render() {
         return (
@@ -129,15 +141,15 @@ export default class Url extends React.Component {
                                             ))}
                                         </DropdownMenu>
                                     </InputGroupButtonDropdown>
-                                    <Input onBlur={this.onBlur} placeholder="https://youtu.be/..." />
+                                    <Input onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
                                     <InputGroupAddon addonType="append">
-                                        <Button onClick={() => this.onAddClick()} color="success">Add</Button>
+                                        <Button onClick={this.onAddClick} color="success">Add</Button>
                                     </InputGroupAddon>
                                 </InputGroup>
                                 {this.state.error.length > 0 && (
                                     <div>
                                         <br />
-                                        <Alert color="danger" isOpen={true} toggle={() => this.onDismiss()}>
+                                        <Alert color="danger" isOpen={true} toggle={this.onDismiss}>
                                             {this.state.error}
                                         </Alert>
                                     </div>
