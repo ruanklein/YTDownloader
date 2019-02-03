@@ -11,6 +11,17 @@ let mainWindow = null;
 if(require('electron-squirrel-startup'))    
     app.quit();
 
+const getFfmpegBin = () => {
+    switch(process.platform) {
+        case 'win32':
+            return `${app.getAppPath()}/res/bin/ffmpeg-win.exe`;
+        case 'darwin':
+            return `${app.getAppPath()}/res/bin/ffmpeg-mac`;
+        default:
+            return null;
+    }
+};
+
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
@@ -53,25 +64,20 @@ ipcMain.on('YouTube:Info', (e, url) => {
     ytConverter.getInfo();
 });
 
-ipcMain.on('YouTube:Download', (e, data) => {
-
-    let ytConverter = [];
-
-    data.map(({ url, info, format }, index) => {
+ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, index) => {
 
         const audioFile = format === 'mp3' ? 
                           `${app.getPath('downloads')}/${info.filename}.mp3` :
                           `${app.getPath('temp')}/${info.filename}.mp4`;
 
-
-        ytConverter.push(new YouTube(e, {
+        const ytConverter = new YouTube(e, {
             url,
             index,
             format,
             audioFile,
-            videoFile: `${app.getPath('downloads')}/${info.filename}.mp4`
-        }));
-    });
-
-    ytConverter.map(converter => converter.run());
-});
+            videoFile: `${app.getPath('downloads')}/${info.filename}.mp4`,
+            ffmpegBin: getFfmpegBin()
+        });
+        ytConverter.run();
+    })
+);
