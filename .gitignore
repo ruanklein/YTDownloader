@@ -2,6 +2,7 @@
 /node_modules
 /build
 /dist
+/res/bin/*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
