@@ -19,7 +19,7 @@ export default class List extends React.Component {
         super(props);
         this.state = { progress: [] };
 
-        this.onRemoveItem = this.onRemoveItem.bind(this);
+        this.onRemoveItem       = this.onRemoveItem.bind(this);
     }
 
     onRemoveItem(index) { 
@@ -27,29 +27,43 @@ export default class List extends React.Component {
     }
 
     componentDidMount() {
+
+        this.componentIsMounted = true;
+
         ipcRenderer.on('YouTube:Download:Progress', (e, index, percentage, message) => {
-            let array = this.state.progress;
-            array[index] = { percentage, message };
-            this.setState({ progress: array });
+            if(this.componentIsMounted) {
+                let array = this.state.progress;
+                array[index] = { percentage, message };
+                this.setState({ progress: array });
+            }
         });
 
         ipcRenderer.on('Converting:Toggle', (e, index) => {
-            this.props.toggleConverting(index);
+            if(this.componentIsMounted)
+                this.props.toggleConverting(index);
         });
 
         ipcRenderer.on('Error', (e, index, message) => {
-            this.props.errorMessage(index, message);
-            this.props.downloadComplete(index);
+            if(this.componentIsMounted) {
+                this.props.errorMessage(index, message);
+                this.props.downloadComplete(index);
+            }
         });
 
         ipcRenderer.on('YouTube:Download:Finish', (e, index) => {
-            this.props.downloadComplete(index);
-            if(this.props.data.filter(({ complete }) => !complete).length < 1)
-                setTimeout(() => { 
-                    this.props.finishDownload();
-                    this.setState({ progress: [] });
-                }, 3000);
+            if(this.componentIsMounted) {
+                this.props.downloadComplete(index);
+                if(this.props.data.filter(({ complete }) => !complete).length < 1)
+                    setTimeout(() => { 
+                        this.props.finishDownload();
+                        this.setState({ progress: [] });
+                    }, 3000);
+            }
         });
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     render() {

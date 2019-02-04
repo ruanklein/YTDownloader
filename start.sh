@@ -24,7 +24,7 @@ build() {
 # package to windows
 electronBuild() { 
     rm -rf dist
-    local pkgname=$(sed '/\"pkgname\"/!d;s/[\"|,|\ ]//g;s/.*://g' package.json)
+    local pkgname=$(sed '/\"productName\"/!d;s/[\"|,|\ ]//g;s/.*://g' package.json)
 
     [ "x${pkgname}" = "x" ] && pkgname="Noname"
 

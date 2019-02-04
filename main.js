@@ -1,7 +1,7 @@
-const { app, BrowserWindow, ipcMain }   = require('electron');
-const serve                             = require('electron-serve');
+const { app, BrowserWindow, ipcMain, shell }   = require('electron');
+const serve                                    = require('electron-serve');
 
-const YouTube                           = require('./lib/YouTube');
+const YouTube                                  = require('./lib/YouTube');
 
 const isDev   = process.env.NODE_ENV === 'development';
 const loadURL = serve({directory: 'build'});
@@ -26,18 +26,15 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        minimizable: process.platform !== 'darwin',
-        maximizable: false,
+        frame: false,
         resizable: false,
-        title: 'YTDownloader',
-        icon: 'res/icon.ico',
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: isDev
         }
     });
 
     mainWindow.setMenu(null);
-    mainWindow.on('close', () => mainWindow = null);
+    mainWindow.on('close', () => mainWindow = null );
 
     if(isDev) {
         mainWindow.loadURL('http://localhost:3000');
@@ -81,3 +78,7 @@ ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, ind
         ytConverter.run();
     })
 );
+
+ipcMain.on('TitleBar:Exit', e => app.quit());
+ipcMain.on('TitleBar:Minimize', e => mainWindow.minimize());
+ipcMain.on('About:Link', (e, link) => shell.openExternal(link));
