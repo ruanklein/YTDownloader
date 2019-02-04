@@ -29,7 +29,7 @@ const createWindow = () => {
         frame: false,
         resizable: false,
         webPreferences: {
-            nodeIntegration: isDev
+            nodeIntegration: true
         }
     });
 

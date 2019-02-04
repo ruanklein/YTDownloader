@@ -37,5 +37,8 @@
     "electron-squirrel-startup": "^1.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "ytdl-core": "^0.29.1"
+  },
+  "resolutions": {
+    "terser": "3.14.1"
   }
 }
