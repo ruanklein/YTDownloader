@@ -33,7 +33,6 @@ const createWindow = () => {
         }
     });
 
-    mainWindow.setMenu(null);
     mainWindow.on('close', () => mainWindow = null );
 
     if(isDev) {
