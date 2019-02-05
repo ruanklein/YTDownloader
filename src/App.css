@@ -45,3 +45,10 @@
   background-color: grey;
   outline-color: grey;
 }
+
+.App-list {
+  max-height: 280px;
+  margin-bottom: 10px;
+  overflow:scroll;
+  -webkit-overflow-scrolling: touch;
+}

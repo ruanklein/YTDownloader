@@ -8,7 +8,8 @@ import {
     Badge,
     Button,
     Alert,
-    Spinner
+    Spinner,
+    Fade
 } from 'reactstrap';
 
 const { ipcRenderer } = window.require('electron');
@@ -71,11 +72,11 @@ export default class List extends React.Component {
             <div>
                 {this.props.dataLoading ? (
                     <div className="App-Loading">
-                        <p>Loading video data...</p>
-                        <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" color="info" />
+                        <p>Loading video data...</p><br />
+                        <Spinner style={{ width: '6rem', height: '6rem' }} type="grow" color="secondary" />
                     </div>
                     ) : (
-                    <ListGroup>
+                    <ListGroup className="App-list">
                         {this.props.data.map((item, index) => {
 
                             const { description, duration } = item.info;
@@ -95,48 +96,40 @@ export default class List extends React.Component {
                             if(this.props.downloading) {
                                 if(item.error.status)
                                     content = (
-                                        <div key={index}>
+                                        <Fade in={true} key={index}>
                                             <ListGroupItem>
                                                 <ListGroupItemHeading>
                                                     {title}
                                                 </ListGroupItemHeading>
-                                                <ListGroupItemText>
-                                                    {description}
-                                                </ListGroupItemText>
                                                 <Alert color="danger">
                                                     {item.error.message}
                                                 </Alert>
-                                                <Badge color="danger" pill>{item.format}</Badge>
                                             </ListGroupItem>
-                                        </div>
+                                        </Fade>
                                     );
                                 else
                                     content = (
-                                        <div key={index}>
+                                        <Fade in={true} key={index}>
                                             <ListGroupItem>
                                                 <ListGroupItemHeading>
                                                     {title}
                                                 </ListGroupItemHeading>
-                                                <ListGroupItemText>
-                                                    {description}
-                                                </ListGroupItemText>
                                                 {item.converting ?
                                                     <Progress
                                                         animated 
-                                                        color="info"
+                                                        color="secondary"
                                                         value={percentage}
                                                         max={100}>
                                                             {message}
                                                     </Progress> :
                                                     <Progress 
-                                                        color="info"
+                                                        color="secondary"
                                                         value={percentage}
                                                         max={100}>
                                                             {percentage <= 100 && `${message} (${percentage}%)`}
                                                     </Progress>}
-                                                <Badge color="secondary" pill>{item.format}</Badge>
                                             </ListGroupItem>
-                                        </div>
+                                        </Fade>
                                     );
                             }
                             // Normal
@@ -145,15 +138,16 @@ export default class List extends React.Component {
                                     <ListGroupItem key={index} className="justify-content-between">
                                         <ListGroupItemHeading>
                                             {title} {(!item.complete || item.error.status) && 
-                                                      <Button onClick={() => this.onRemoveItem(index)} close />}
+                                                        <Button onClick={() => this.onRemoveItem(index)} close />}
                                             </ListGroupItemHeading>
                                         <ListGroupItemText>
                                             {description}
                                         </ListGroupItemText>
-                                        {item.complete && !item.error.status && <Alert color="secondary">Completed! ;-)</Alert>}
+                                        {item.complete && !item.error.status && 
+                                                <Alert color="secondary">Completed! ;-)</Alert>}
                                         {item.error.status ?
-                                         <Badge color="danger" pill>{item.format}</Badge> :
-                                         <Badge color="secondary" pill>{item.format}</Badge>}
+                                                <Badge color="danger" pill>{item.format}</Badge> :
+                                                <Badge color="secondary" pill>{item.format}</Badge>}
                                     </ListGroupItem>
                                 );
                             }

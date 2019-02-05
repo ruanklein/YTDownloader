@@ -111,54 +111,48 @@ export default class Url extends React.Component {
     }
 
     render() {
+
+        const showInput = !this.props.dataLoading && !this.props.downloading;
+
         return (
             <div>
-                {this.props.downloading ? (
-                    <div className="App-Loading">
-                        <p>Downloading...</p>
-                        <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" color="success" />
-                    </div>
-                    ) : (
+                {showInput && (
                     <div>
-                        {!this.props.dataLoading && (
+                        <InputGroup>
+                            <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonShow} toggle={this.toggleSplit}>
+                                <Button 
+                                    style={{ color: 'black' }}
+                                    disabled
+                                    outline>
+                                        {this.state.selectedFormat.toUpperCase()}
+                                </Button>
+                                <DropdownToggle split outline />
+                                <DropdownMenu>
+                                    <DropdownItem header>Select output format</DropdownItem>
+                                    {this.formats.map((item, index) => ( 
+                                        <div key={index}>
+                                            {item !== this.state.selectedFormat && 
+                                            <DropdownItem
+                                                className="App-dropdown-item"
+                                                value={item}
+                                                onClick={this.onSelectFormat}>
+                                                    {item.toUpperCase()}
+                                            </DropdownItem>}
+                                        </div>  
+                                    ))}
+                                </DropdownMenu>
+                            </InputGroupButtonDropdown>
+                            <Input className="App-input" onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
+                            <InputGroupAddon addonType="append">
+                                <Button outline onClick={this.onAddClick} color="secondary">Add</Button>
+                            </InputGroupAddon>
+                        </InputGroup>
+                        {this.state.error.length > 0 && (
                             <div>
-                                <InputGroup>
-                                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonShow} toggle={this.toggleSplit}>
-                                        <Button 
-                                            style={{ color: 'black' }}
-                                            disabled
-                                            outline>
-                                                {this.state.selectedFormat.toUpperCase()}
-                                        </Button>
-                                        <DropdownToggle split outline />
-                                        <DropdownMenu>
-                                            <DropdownItem header>Select output format</DropdownItem>
-                                            {this.formats.map((item, index) => ( 
-                                              <div key={index}>
-                                                  {item !== this.state.selectedFormat && 
-                                                    <DropdownItem
-                                                        className="App-dropdown-item"
-                                                        value={item}
-                                                        onClick={this.onSelectFormat}>
-                                                            {item.toUpperCase()}
-                                                    </DropdownItem>}
-                                              </div>  
-                                            ))}
-                                        </DropdownMenu>
-                                    </InputGroupButtonDropdown>
-                                    <Input className="App-input" onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
-                                    <InputGroupAddon addonType="append">
-                                        <Button outline onClick={this.onAddClick} color="secondary">Add</Button>
-                                    </InputGroupAddon>
-                                </InputGroup>
-                                {this.state.error.length > 0 && (
-                                    <div>
-                                        <br />
-                                        <Alert color="secondary" isOpen={true} toggle={this.onDismiss}>
-                                            {this.state.error}
-                                        </Alert>
-                                    </div>
-                                )}
+                                <br />
+                                <Alert color="secondary" isOpen={true} toggle={this.onDismiss}>
+                                    {this.state.error}
+                                </Alert>
                             </div>
                         )}
                     </div>

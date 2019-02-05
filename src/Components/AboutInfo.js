@@ -20,7 +20,7 @@ export default class AboutInfo extends React.Component {
     render() {
         return (
             <div className="text-center">
-                <img src="/assets/about.png" className="img-fluid" alt="Developer" />
+                {/* <img src="/assets/about.png" className="img-fluid" alt="Developer" /> */}
                 <br /><br />
                 <h4>YTDownloader 1.0.0</h4>
                 <h6>YouTube Downloader for Mp3/Mp4</h6>

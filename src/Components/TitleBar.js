@@ -81,13 +81,13 @@ export default class TitleBar extends React.Component {
             </Collapse>
         </Navbar>
         <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
-          <ModalHeader toggle={this.toggleModal}>Exit</ModalHeader>
+          <ModalHeader className="App-title-button" toggle={this.toggleModal}>Exit</ModalHeader>
           <ModalBody>
             Really? You have URLs in list...
           </ModalBody>
           <ModalFooter>
-            <Button color="danger" onClick={this.onQuitAppClick}>Exit</Button>{' '}
-            <Button color="info" onClick={this.toggleModal}>Cancel</Button>
+            <Button outline color="danger" onClick={this.onQuitAppClick}>Exit</Button>{' '}
+            <Button outline color="secondary" onClick={this.toggleModal}>Cancel</Button>
         </ModalFooter>
         </Modal>
       </div>
