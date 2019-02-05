@@ -124,14 +124,18 @@ export default class Url extends React.Component {
                             <div>
                                 <InputGroup>
                                     <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonShow} toggle={this.toggleSplit}>
-                                        <Button disabled outline>{this.state.selectedFormat.toUpperCase()}</Button>
-                                                <DropdownToggle split outline />
+                                        <Button 
+                                            style={{ color: 'black' }}
+                                            disabled
+                                            outline>
+                                                {this.state.selectedFormat.toUpperCase()}
+                                        </Button>
+                                        <DropdownToggle split outline />
                                         <DropdownMenu>
                                             <DropdownItem header>Select output format</DropdownItem>
                                             {this.formats.map((item, index) => ( 
                                               <div key={index}>
-                                                  {item === this.state.selectedFormat ? 
-                                                    <DropdownItem disabled>{item.toUpperCase()}</DropdownItem> :
+                                                  {item !== this.state.selectedFormat && 
                                                     <DropdownItem
                                                         className="App-dropdown-item"
                                                         value={item}

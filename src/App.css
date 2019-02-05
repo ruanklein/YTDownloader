@@ -41,5 +41,7 @@
 }
 
 .App-dropdown-item:focus {
-  color: grey;
+  color: white;
+  background-color: grey;
+  outline-color: grey;
 }
