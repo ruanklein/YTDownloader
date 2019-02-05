@@ -57,8 +57,8 @@ export default class TitleBar extends React.Component {
 
     return (
       <div>
-        <Navbar color="faded" light sticky="top">
-          <NavbarBrand className="mr-auto">
+        <Navbar className="App-drag" color="faded" light sticky="top" fixed={true}>
+          <NavbarBrand className="mr-auto App-nodrag App-title-button">
             <Button style={{ paddingLeft: '10px' }} onClick={this.onMinimizeAppClick} close aria-label="Cancel">
               <span aria-hidden>&ndash;</span>
             </Button>
@@ -66,10 +66,10 @@ export default class TitleBar extends React.Component {
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.onQuitAppClick} close /> :
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.toggleModal} close /> }
           </NavbarBrand>
-            {showMenu && <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />} 
+            {showMenu && <NavbarToggler onClick={this.toggleNavbar} className="mr-2 App-nodrag" />} 
             <Collapse isOpen={!this.state.collapsed} navbar>
               {showMenu && (
-                <Nav navbar>
+                <Nav className="App-nodrag" navbar>
                   <NavItem className="App-nav-item">
                     <Link to="/About">About...</Link>
                   </NavItem>

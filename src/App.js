@@ -21,7 +21,7 @@ export default class App extends React.Component {
           <TitleBarContainer />
         </div>
         <Container>
-          <div className="App">
+          <div className="App App-nodrag">
               <Row>
                 <Col>
                   <Fade in={true}>

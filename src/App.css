@@ -1,12 +1,5 @@
 .App {
   margin: 5%;
-  -webkit-user-select: none;
-  -webkit-app-region: no-drag;
-}
-
-.App-title-bar {
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
 }
 
 .App-Loading {
@@ -17,4 +10,18 @@
   padding: 15px;
   display: inline-block;
   line-height: 5px;
+}
+
+.App-drag {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.App-nodrag {
+  -webkit-user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+.App-title-button button {
+  outline-color: white
 }
