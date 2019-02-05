@@ -134,7 +134,7 @@ export default class List extends React.Component {
                                                         max={100}>
                                                             {percentage <= 100 && `${message} (${percentage}%)`}
                                                     </Progress>}
-                                                <Badge color="primary" pill>{item.format}</Badge>
+                                                <Badge color="secondary" pill>{item.format}</Badge>
                                             </ListGroupItem>
                                         </div>
                                     );
@@ -150,10 +150,10 @@ export default class List extends React.Component {
                                         <ListGroupItemText>
                                             {description}
                                         </ListGroupItemText>
-                                        {item.complete && !item.error.status && <Alert color="primary">Completed! ;-)</Alert>}
+                                        {item.complete && !item.error.status && <Alert color="secondary">Completed! ;-)</Alert>}
                                         {item.error.status ?
                                          <Badge color="danger" pill>{item.format}</Badge> :
-                                         <Badge color="primary" pill>{item.format}</Badge>}
+                                         <Badge color="secondary" pill>{item.format}</Badge>}
                                     </ListGroupItem>
                                 );
                             }

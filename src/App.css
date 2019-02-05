@@ -25,3 +25,21 @@
 .App-title-button button {
   outline-color: white
 }
+
+.App-link {
+  color: grey;
+}
+
+.App-link:hover {
+  color: grey;
+}
+
+.App-input:focus {
+  border-color: grey;
+  box-shadow: 0 1px 1px darkgrey inset, 0 0 8px grey;
+  outline: 0 none;
+}
+
+.App-dropdown-item:focus {
+  color: grey;
+}

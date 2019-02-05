@@ -66,15 +66,15 @@ export default class TitleBar extends React.Component {
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.onQuitAppClick} close /> :
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.toggleModal} close /> }
           </NavbarBrand>
-            {showMenu && <NavbarToggler onClick={this.toggleNavbar} className="mr-2 App-nodrag" />} 
+            {showMenu && <NavbarToggler style={{ outlineColor: 'grey' }} onClick={this.toggleNavbar} className="mr-2 App-nodrag" />} 
             <Collapse isOpen={!this.state.collapsed} navbar>
               {showMenu && (
                 <Nav className="App-nodrag" navbar>
                   <NavItem className="App-nav-item">
-                    <Link to="/About">About...</Link>
+                    <Link className="App-link" to="/About">About...</Link>
                   </NavItem>
                   <NavItem className="App-nav-item">
-                    <Link to="/">YTDownloader</Link>
+                    <Link className="App-link" to="/">YTDownloader</Link>
                   </NavItem>
                 </Nav>
               )}

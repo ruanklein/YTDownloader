@@ -125,14 +125,15 @@ export default class Url extends React.Component {
                                 <InputGroup>
                                     <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonShow} toggle={this.toggleSplit}>
                                         <Button disabled outline>{this.state.selectedFormat.toUpperCase()}</Button>
-                                        <DropdownToggle split outline />
+                                                <DropdownToggle split outline />
                                         <DropdownMenu>
                                             <DropdownItem header>Select output format</DropdownItem>
                                             {this.formats.map((item, index) => ( 
                                               <div key={index}>
                                                   {item === this.state.selectedFormat ? 
                                                     <DropdownItem disabled>{item.toUpperCase()}</DropdownItem> :
-                                                    <DropdownItem 
+                                                    <DropdownItem
+                                                        className="App-dropdown-item"
                                                         value={item}
                                                         onClick={this.onSelectFormat}>
                                                             {item.toUpperCase()}
@@ -141,15 +142,15 @@ export default class Url extends React.Component {
                                             ))}
                                         </DropdownMenu>
                                     </InputGroupButtonDropdown>
-                                    <Input onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
+                                    <Input className="App-input" onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
                                     <InputGroupAddon addonType="append">
-                                        <Button onClick={this.onAddClick} color="success">Add</Button>
+                                        <Button outline onClick={this.onAddClick} color="secondary">Add</Button>
                                     </InputGroupAddon>
                                 </InputGroup>
                                 {this.state.error.length > 0 && (
                                     <div>
                                         <br />
-                                        <Alert color="danger" isOpen={true} toggle={this.onDismiss}>
+                                        <Alert color="secondary" isOpen={true} toggle={this.onDismiss}>
                                             {this.state.error}
                                         </Alert>
                                     </div>

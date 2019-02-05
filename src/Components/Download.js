@@ -32,14 +32,15 @@ export default class Download extends React.Component {
 
                 content = (
                     <div>
-                        {showDownloadButton && <Button 
+                        {showDownloadButton && <Button
+                                                  outline 
                                                   onClick={this.onDownloadClick}
-                                                  color="success"
+                                                  color="secondary"
                                                   size="lg"
                                                   block>
                                                     Download
                                                 </Button>}
-                        <Button onClick={this.onCleanClick} color="info" size="lg" block>Clear</Button>
+                        <Button outline onClick={this.onCleanClick} color="secondary" size="lg" block>Clear</Button>
                     </div>
                 );
         }

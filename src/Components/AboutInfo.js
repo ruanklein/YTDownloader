@@ -27,9 +27,9 @@ export default class AboutInfo extends React.Component {
                 <br />
                 <p style={{ fontSize: '13px' }}>
                     2019 {'<ruan.klein@gmail.com>'}<br />
-                    <Button onClick={this.onLinkClick} size="sm" color="link">Source Code on GitHub</Button><br /><br />
+                    <Button className="App-link" onClick={this.onLinkClick} size="sm" color="link">Source Code on GitHub</Button><br /><br />
                     <Link to="/">
-                        <Button outline color="primary">Back</Button>
+                        <Button outline color="secondary">Back</Button>
                     </Link>
                 </p>
 
