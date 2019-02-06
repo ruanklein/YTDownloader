@@ -8,7 +8,6 @@ import {
     DropdownItem,
     Button,
     Input,
-    Spinner,
     Alert
 } from 'reactstrap';
 

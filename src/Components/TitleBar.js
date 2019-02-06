@@ -57,7 +57,7 @@ export default class TitleBar extends React.Component {
 
     return (
       <div>
-        <Navbar className="App-drag" color="faded" light sticky="top" fixed={true}>
+        <Navbar className="App-drag" color="faded" light>
           <NavbarBrand className="mr-auto App-nodrag App-title-button">
             <Button style={{ paddingLeft: '10px' }} onClick={this.onMinimizeAppClick} close aria-label="Cancel">
               <span aria-hidden>&ndash;</span>
