@@ -91,7 +91,7 @@ export default class List extends React.Component {
                         <Spinner style={{ width: '6rem', height: '6rem' }} type="grow" color="secondary" />
                     </div>
                     ) : (
-                    <ListGroup className="App-list">
+                    <ListGroup className="App-list" style={{ overflowY: 'scroll' }}>
                         {this.props.data.map((item, index) => {
 
                             const { description, duration } = item.info;

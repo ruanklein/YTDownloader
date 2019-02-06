@@ -50,5 +50,7 @@
   max-height: 280px;
   margin-bottom: 10px;
   overflow:scroll;
+  overflow-y: hidden;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }

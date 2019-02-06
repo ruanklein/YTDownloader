@@ -53,6 +53,12 @@ export default class Url extends React.Component {
             return;
         }
 
+        // Twice url
+        if(this.props.data.find(({ url }) => url === this.url)) {
+            this.setState({ error: 'This URL has already been added!' });
+            return;
+        }
+
         // Invalid YouTube URL
         if(!this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/)) {
             this.setState({ error: 'Invalid YouTube URL!' });
@@ -69,9 +75,24 @@ export default class Url extends React.Component {
         this.props.startDataLoading();
 
         ipcRenderer.send('YouTube:Info', this.url);
-        ipcRenderer.on('YouTube:Info:Data', (e, info) => {
+    }
 
-            if(this.twiceUrl()) return;
+    onSelectFormat(e) {
+        e.preventDefault();
+        this.setState({ selectedFormat: e.target.value });
+    }
+
+    onUrlChanged(e) {
+        e.preventDefault(); 
+        this.url = e.target.value;
+    }
+
+    onDismiss() { 
+        this.setState({ error: '' });
+    }
+
+    componentDidMount() {
+        ipcRenderer.on('YouTube:Info:Data', (e, info) => {
 
             if(info.error) {
                 this.props.finishDataLoading();
@@ -93,20 +114,6 @@ export default class Url extends React.Component {
 
             this.props.finishDataLoading();
         });
-    }
-
-    onSelectFormat(e) {
-        e.preventDefault();
-        this.setState({ selectedFormat: e.target.value });
-    }
-
-    onUrlChanged(e) {
-        e.preventDefault(); 
-        this.url = e.target.value;
-    }
-
-    onDismiss() { 
-        this.setState({ error: '' });
     }
 
     render() {
