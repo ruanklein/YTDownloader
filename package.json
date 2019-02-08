@@ -18,12 +18,12 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "./start.sh --dev",
-    "start-prod": "./start.sh",
-    "build": "./start.sh --build",
-    "electron-build": "./start.sh --electron-build",
-    "electron-setup": "./start.sh --electron-setup",
-    "build-all": "./start.sh --build-all"
+    "start"           : "./start.sh --dev",
+    "start-prod"      : "./start.sh",
+    "build"           : "./start.sh --build",
+    "electron-build"  : "./start.sh --electron-build",
+    "electron-setup"  : "./start.sh --electron-setup",
+    "build-all"       : "./start.sh --build-all"
   },
   "browserslist": [
     ">0.2%",

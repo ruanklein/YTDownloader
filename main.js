@@ -1,83 +1,22 @@
-const { app, BrowserWindow, ipcMain, shell }   = require('electron');
-const serve                                    = require('electron-serve');
+const { app }     = require('electron');
 
-const YouTube                                  = require('./lib/YouTube');
+const MainWindow  = require('./electron/MainWindow');
+const Event       = require('./electron/Event');
 
-const isDev   = process.env.NODE_ENV === 'development';
-const loadURL = serve({directory: 'build'});
+let ffmpegBin;
 
-let mainWindow = null;
+switch(process.platform) {
+    case 'win32':
+        ffmpegBin = `${app.getPath('appData')}/res/bin/ffmpeg.exe`;
+    default:
+        ffmpegBin = `${app.getPath('appData')}/res/bin/ffmpeg`;
+}
 
-if(require('electron-squirrel-startup'))    
-    app.quit();
+const event  = new Event(app, new MainWindow);
 
-const getFfmpegBin = () => {
-    switch(process.platform) {
-        case 'win32':
-            return `${app.getAppPath()}/res/bin/ffmpeg-win.exe`;
-        case 'darwin':
-            return `${app.getAppPath()}/res/bin/ffmpeg-mac`;
-        default:
-            return null;
-    }
-};
+if(event.handleStartUpEvent())
+    return;
 
-const createWindow = () => {
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        frame: false,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        }
-    });
-
-    mainWindow.on('close', () => mainWindow = null );
-
-    if(isDev) {
-        mainWindow.loadURL('http://localhost:3000');
-        return;
-    }
-
-    loadURL(mainWindow);
-};
-
-app.on('ready', createWindow);
-
-app.on('window-all-closed', () => {
-    if(process.platform !== 'darwin')
-        app.quit();
-});
-
-app.on('activate', () => {
-    if(mainWindow === null)
-        createWindow();
-});
-
-ipcMain.on('YouTube:Info', (e, url) => {
-    const ytConverter = new YouTube(e, { url });
-    ytConverter.getInfo();
-});
-
-ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, index) => {
-
-        const audioFile = format === 'mp3' ? 
-                          `${app.getPath('downloads')}/${info.filename}.mp3` :
-                          `${app.getPath('temp')}/${info.filename}.mp4`;
-
-        const ytConverter = new YouTube(e, {
-            url,
-            index,
-            format,
-            audioFile,
-            videoFile: `${app.getPath('downloads')}/${info.filename}.mp4`,
-            ffmpegBin: getFfmpegBin()
-        });
-        ytConverter.run();
-    })
-);
-
-ipcMain.on('TitleBar:Exit', e => app.quit());
-ipcMain.on('TitleBar:Minimize', e => mainWindow.minimize());
-ipcMain.on('About:Link', (e, link) => shell.openExternal(link));
+event.startAppEvents();
+event.startWindowEvents();
+event.startYouTubeEvents(ffmpegBin);
