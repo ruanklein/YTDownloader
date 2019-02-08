@@ -20,9 +20,9 @@ export default class AboutInfo extends React.Component {
     render() {
         return (
             <div className="text-center">
-                <img src="/assets/about.png" className="img-fluid" alt="Developer" />
+                <img src="/assets/about.png" className="img-fluid" alt="YTDownloader" />
                 <br /><br />
-                <h4>YTDownloader 1.0.0</h4>
+                {/* <h4>YTDownloader 1.0.0</h4> */}
                 <h6>YouTube Downloader for MP3/MP4</h6>
                 <br />
                 <p style={{ fontSize: '13px' }}>
