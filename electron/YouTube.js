@@ -1,5 +1,6 @@
 const ytdl   = require('ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
+const ffbin  = require('ffmpeg-static-electron');
 const fs     = require('fs');
 
 class YouTube {
@@ -43,21 +44,16 @@ class YouTube {
 
     run() {
         const { audioFile, videoFile, url, index, format, ffmpegBin } = this.data;
-        const command = ffmpegBin !== null ? ffmpeg().setFfmpegPath(ffmpegBin) : ffmpeg();
-        
+        const command = ffmpeg().setFfmpegPath(ffbin.path);
+
         let message = 'Downloading Video';
 
         if(format === 'mp4') {
             ytdl(url, { filter: ({ container, encoding }) => container === 'm4a' && !encoding })
-                .on('response', res => {
-                    const size = res.headers['content-length'];
-                    let pos = 0;
-
-                    res.on('data', chunk => {
-                        pos += chunk.length;
-                        let percentage = ((pos / size) * 100).toFixed(0);
-                        this.event.sender.send('YouTube:Download:Progress', index, percentage, message);
-                    });
+                .on('progress', (chunkLength, downloaded, total) => {
+                    const percentage = downloaded / total;
+                    this.event.sender.send('YouTube:Download:Progress', 
+                        index, (percentage*100).toFixed(0), message);
                 })
                 .on('error', err => {
                     this.event.sender.send('Error', index, err);

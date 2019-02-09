@@ -9,4 +9,4 @@ if(event.handleStartUpEvent())
 
 event.startAppEvents();
 event.startWindowEvents();
-event.startYouTubeEvents(`${app.getPath('appData')}/res/${process.platform==='win32'?'ffmpeg.exe':'ffmpeg'}`);
+event.startYouTubeEvents();

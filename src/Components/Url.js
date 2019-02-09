@@ -94,6 +94,8 @@ export default class Url extends React.Component {
     componentDidMount() {
         ipcRenderer.on('YouTube:Info:Data', (e, info) => {
 
+            if(this.twiceUrl()) return;
+
             if(info.error) {
                 this.props.finishDataLoading();
                 this.setState({ error: 'Error to get video url!' });

@@ -30,7 +30,6 @@ electronBuild() {
 
     electron-packager . ${pkgname} \
     --icon res/icon.ico \
-    --asar \
     --platform win32 \
     --arch x64 \
     --out dist

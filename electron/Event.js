@@ -4,8 +4,8 @@ const fs                 = require('fs');
 
 class Event {
     constructor(app, window) {
-        this.app    = app;
-        this.window = window;
+        this.app     = app;
+        this.window  = window;
     }
 
     handleStartUpEvent() {
@@ -15,17 +15,6 @@ class Event {
         switch(process.argv[1]) {
             case '--squirrel-install':
             case '--squirrel-updated':
-
-                const destDir   = `${this.app.getPath('appData')}/bin`;
-                const destFile  = `${destDir}/ffmpeg.exe`;
-            
-                if(!fs.existsSync(destDir))
-                    fs.mkdirSync(destDir, err => console.log(`mkdir: ${err}`));
-            
-                fs.copyFileSync(`${this.app.getAppPath()}/res/bin/ffmpeg-win.exe`, destFile);
-
-                this.app.quit();
-                return true;
             case '--squirrel-uninstall':
             case '--squirrel-obsolete':
                 this.app.quit();
@@ -49,7 +38,7 @@ class Event {
         });
     }
 
-    startYouTubeEvents(ffmpegBin) {
+    startYouTubeEvents() {
         ipcMain.on('YouTube:Info', (e, url) => {
             const ytConverter = new YouTube(e, { url });
             ytConverter.getInfo();
@@ -66,8 +55,7 @@ class Event {
                     index,
                     format,
                     audioFile,
-                    videoFile: `${this.app.getPath('downloads')}/${info.filename}.mp4`,
-                    ffmpegBin
+                    videoFile: `${this.app.getPath('downloads')}/${info.filename}.mp4`
                 });
                 ytConverter.run();
             })

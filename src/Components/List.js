@@ -34,23 +34,8 @@ export default class List extends React.Component {
         ipcRenderer.on('YouTube:Download:Progress', (e, index, percentage, message) => {
             if(this.componentIsMounted) {
                 let array = this.state.progress;
-
-                if(typeof array[index] === 'undefined') {
-                    array[index] = { percentage, message };
-                    this.setState({ progress: array });
-                    return;
-                }
-
-                const percentageA = parseInt(array[index].percentage);
-                const percentageB = parseInt(percentage);
-
-                const messageA    = new String(array[index].message).valueOf();
-                const messageB    = new String(message).valueOf();
-
-                if(percentageA !== percentageB || messageA !== messageB) {
-                    array[index] = { percentage, message };
-                    this.setState({ progress: array });
-                }
+                array[index] = { percentage, message };
+                this.setState({ progress: array });
             }
         });
 
