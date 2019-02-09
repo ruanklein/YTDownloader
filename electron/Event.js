@@ -1,6 +1,5 @@
 const { ipcMain, shell } = require('electron');
 const YouTube            = require('./YouTube');
-const fs                 = require('fs');
 
 class Event {
     constructor(app, window) {
