@@ -43,7 +43,7 @@ class YouTube {
     }
 
     run() {
-        const { audioFile, videoFile, url, index, format, ffmpegBin } = this.data;
+        const { audioFile, videoFile, url, index, format } = this.data;
         const command = ffmpeg().setFfmpegPath(ffbin.path);
 
         let message = 'Downloading Video';
