@@ -6,6 +6,8 @@
   "author": "Ruan Klein",
   "devDependencies": {
     "electron": "^4.0.1",
+    "electron-installer-debian": "^1.1.0",
+    "electron-installer-dmg": "^2.0.0",
     "electron-installer-windows": "^1.1.0",
     "electron-packager": "^13.0.1",
     "react": "^16.7.0",
@@ -19,11 +21,16 @@
   "license": "MIT",
   "scripts": {
     "start": "./start.sh --dev",
-    "start-prod": "./start.sh",
-    "build": "./start.sh --build",
-    "electron-build": "./start.sh --electron-build",
-    "electron-setup": "./start.sh --electron-setup",
-    "build-all": "./start.sh --build-all"
+    "start:prod": "./start.sh",
+    "electron:build:windows": "./start.sh --electron-build-windows",
+    "electron:build:mac": "./start.sh --electron-build-mac",
+    "electron:build:ubuntu": "./start.sh --electron-build-ubuntu",
+    "electron:setup:windows": "./start.sh --electron-setup-windows",
+    "electron:setup:mac": "./start.sh --electron-setup-mac",
+    "electron:setup:ubuntu": "./start.sh --electron-setup-ubuntu",
+    "build:windows": "./start.sh --build-windows",
+    "build:mac": "./start.sh --build-mac",
+    "build:ubuntu": "./start.sh --build-ubuntu"
   },
   "browserslist": [
     ">0.2%",
