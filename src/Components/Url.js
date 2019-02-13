@@ -34,10 +34,6 @@ export default class Url extends React.Component {
         this.toggleSplit    = this.toggleSplit.bind(this);
     }
 
-    twiceUrl() { 
-        return this.props.data.find(({ url }) => url === this.url);
-    }
-
     toggleSplit() { 
         this.setState({ splitButtonShow: !this.state.splitButtonShow });
     }
@@ -65,12 +61,6 @@ export default class Url extends React.Component {
             return;
         }
 
-        // Same url added
-        if(this.twiceUrl()) {
-            this.setState({ error: 'This URL has already been added!' });
-            return;
-        }
-
         // Get video info
         this.props.startDataLoading();
 
@@ -84,7 +74,7 @@ export default class Url extends React.Component {
 
     onUrlChanged(e) {
         e.preventDefault(); 
-        this.url = e.target.value;
+        this.url = e.target.value.trim();
     }
 
     onDismiss() { 
@@ -93,8 +83,6 @@ export default class Url extends React.Component {
 
     componentDidMount() {
         ipcRenderer.on('YouTube:Info:Data', (e, info) => {
-
-            if(this.twiceUrl()) return;
 
             if(info.error) {
                 this.props.finishDataLoading();

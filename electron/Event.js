@@ -1,5 +1,5 @@
-const { ipcMain, shell } = require('electron');
-const YouTube            = require('./YouTube');
+const { ipcMain, shell, Menu } = require('electron');
+const YouTube                  = require('./YouTube');
 
 class Event {
     constructor(app, window) {
@@ -23,21 +23,55 @@ class Event {
 
     startAppEvents() {
         this.app.on('ready', this.window.createWindow);
+
+        if(process.platform === 'darwin') {
+
+            this.app.on('activate', () => this.window.getWindow().show());
+
+            let appSubMenu = [{ label: "Quit", role: "quit" }];
+
+            let editSubMenu = [
+                { label: "Undo", role: "undo" },
+                { label: "Redo", role: "redo" },
+                { type: "separator" },
+                { label: "Cut", role: "cut" },
+                { label: "Copy", role: "copy" },
+                { label: "Paste", role: "paste" },
+                { label: "Select All", role: "selectAll" }
+            ];
+
+            if(process.env.NODE_ENV === 'development')
+                editSubMenu.push({ label: "Refresh", role: "reload" });
+
+            Menu.setApplicationMenu(Menu.buildFromTemplate([
+                {
+                    label: 'YTDownloader',
+                    submenu: appSubMenu
+                },
+                {
+                    label: 'Edit',
+                    submenu: editSubMenu
+                }
+            ]));
+        }
     }
 
     startWindowEvents() {
         ipcMain.on('TitleBar:Exit', e => {
-            this.app.quit()
+            if(process.platform !== 'darwin')
+                this.app.quit();
+            else
+                this.window.getWindow().hide();
         });
         ipcMain.on('TitleBar:Minimize', e => { 
-            this.window.getWindow().minimize()
+            this.window.getWindow().minimize();
         });
         ipcMain.on('About:Link', (e, link) => {
-            shell.openExternal(link)
+            shell.openExternal(link);
         });
     }
 
-    startYouTubeEvents() {
+    startMainEvents() {
         ipcMain.on('YouTube:Info', (e, url) => {
             const ytConverter = new YouTube(e, { url });
             ytConverter.getInfo();

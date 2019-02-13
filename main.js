@@ -9,4 +9,4 @@ if(event.handleStartUpEvent())
 
 event.startAppEvents();
 event.startWindowEvents();
-event.startYouTubeEvents();
+event.startMainEvents();
