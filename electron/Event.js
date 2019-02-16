@@ -24,8 +24,10 @@ class Event {
     startAppEvents() {
         this.app.on('ready', this.window.createWindow);
 
+        // Enable copy & paste for OSX platform
         if(process.platform === 'darwin') {
 
+            // Show app on click in docker
             this.app.on('activate', () => this.window.getWindow().show());
 
             let appSubMenu = [{ label: "Quit", role: "quit" }];
@@ -40,6 +42,7 @@ class Event {
                 { label: "Select All", role: "selectAll" }
             ];
 
+            // Enable refresh page (cmd+R) on development mode
             if(process.env.NODE_ENV === 'development')
                 editSubMenu.push({ label: "Refresh", role: "reload" });
 
@@ -58,6 +61,7 @@ class Event {
 
     startWindowEvents() {
         ipcMain.on('TitleBar:Exit', e => {
+            // Exit app on Windows/Linux OS
             if(process.platform !== 'darwin')
                 this.app.quit();
             else
@@ -69,14 +73,20 @@ class Event {
         ipcMain.on('About:Link', (e, link) => {
             shell.openExternal(link);
         });
+        // Check if OS is OSX to handle window close event
+        ipcMain.on('OS', e => {
+            e.sender.send('OS:Info', process.platform === 'darwin');
+        });
     }
 
     startMainEvents() {
+        // Get video metadata
         ipcMain.on('YouTube:Info', (e, url) => {
             const ytConverter = new YouTube(e, { url });
             ytConverter.getInfo();
         });
         
+        // Start download
         ipcMain.on('YouTube:Download', (e, data) => data.map(({ url, info, format }, index) => {
         
                 const audioFile = format === 'mp3' ? 

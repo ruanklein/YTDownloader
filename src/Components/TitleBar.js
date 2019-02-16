@@ -51,6 +51,13 @@ export default class TitleBar extends React.Component {
     });
   }
 
+  componentDidMount() {
+    ipcRenderer.send('OS');
+    ipcRenderer.on('OS:Info', (e, osx) => {
+      this.isMacOS = osx;
+    });
+  }
+
   render() {
 
     const showMenu = this.props.data.length < 1 && !this.props.dataLoading;
@@ -62,7 +69,7 @@ export default class TitleBar extends React.Component {
             <Button style={{ paddingLeft: '10px' }} onClick={this.onMinimizeAppClick} close aria-label="Cancel">
               <span aria-hidden>&ndash;</span>
             </Button>
-            {this.props.data.length < 1 ? 
+            {this.props.data.length < 1 || this.isMacOS ? 
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.onQuitAppClick} close /> :
               <Button style={{ paddingLeft: '10px' }} className="App-title-bar-close" onClick={this.toggleModal} close /> }
           </NavbarBrand>

@@ -1,7 +1,8 @@
 const ytdl   = require('ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
-const ffbin  = require('ffmpeg-static-electron');
 const fs     = require('fs');
+
+const { normalize } = require('path');
 
 class YouTube {
     constructor(event, data) {
@@ -11,7 +12,7 @@ class YouTube {
 
     getInfo() {
         const { url } = this.data;
-        ytdl.getBasicInfo(url, (err, info) => {
+        ytdl.getBasicInfo(url, [], (err, info) => {
 
             const fmtTime = s => (s-(s %= 60)) / 60 + (9 < s ? ':' : ':0' ) + s;
          
@@ -44,7 +45,8 @@ class YouTube {
 
     run() {
         const { audioFile, videoFile, url, index, format } = this.data;
-        const command = ffmpeg().setFfmpegPath(ffbin.path);
+        const ffmpegBin = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
+        const command = ffmpeg().setFfmpegPath(normalize(`${__dirname}/../res/bin/${ffmpegBin}`));
 
         let message = 'Downloading Video';
 

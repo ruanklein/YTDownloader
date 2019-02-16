@@ -42,7 +42,6 @@
     "bootstrap": "^4.2.1",
     "electron-serve": "^0.2.0",
     "electron-squirrel-startup": "^1.0.0",
-    "ffmpeg-static-electron": "^2.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "ytdl-core": "^0.29.1"
   },
