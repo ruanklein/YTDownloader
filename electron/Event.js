@@ -77,6 +77,10 @@ class Event {
         ipcMain.on('OS', e => {
             e.sender.send('OS:Info', process.platform === 'darwin');
         });
+        // Clipboard
+        ipcMain.on('Clipboard:paste', (e, url) => {
+            e.sender.send('Clipboard:paste:url', url);
+        });
     }
 
     startMainEvents() {

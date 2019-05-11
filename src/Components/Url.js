@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     InputGroup, 
-    InputGroupAddon, 
+    // InputGroupAddon, 
     InputGroupButtonDropdown,
     DropdownToggle,
     DropdownMenu,
@@ -27,7 +27,7 @@ export default class Url extends React.Component {
         this.url            = '';
         this.formats        = ['mp4', 'mp3'];
 
-        this.onAddClick     = this.onAddClick.bind(this);
+        // this.onAddClick     = this.onAddClick.bind(this);
         this.onUrlChanged   = this.onUrlChanged.bind(this);
         this.onDismiss      = this.onDismiss.bind(this);
         this.onSelectFormat = this.onSelectFormat.bind(this);
@@ -38,34 +38,38 @@ export default class Url extends React.Component {
         this.setState({ splitButtonShow: !this.state.splitButtonShow });
     }
 
-    onAddClick() {
-
-        // Find completed download and remove
-        this.props.removeCompleted();
-
+    testUrl() {
         // No URL
         if(this.url.length < 1) {
             this.setState({ error: 'Empty URL field!' });
-            return;
+            return false;
         }
 
         // Twice url
         if(this.props.data.find(({ url }) => url === this.url)) {
             this.setState({ error: 'This URL has already been added!' });
-            return;
+            return false;
         }
 
         // Invalid YouTube URL
         if(!this.url.match(/^.*(youtu.be\/|v\/|u\/\w\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/)) {
             this.setState({ error: 'Invalid YouTube URL!' });
-            return;
+            return false;
         }
 
-        // Get video info
-        this.props.startDataLoading();
-
-        ipcRenderer.send('YouTube:Info', this.url);
+        return true;
     }
+
+    // onAddClick() {
+    //     // Find completed download and remove
+    //     this.props.removeCompleted();
+
+    //     if(this.testUrl()) {
+    //         // Get video info
+    //         this.props.startDataLoading();
+    //         ipcRenderer.send('YouTube:Info', this.url);
+    //     }
+    // }
 
     onSelectFormat(e) {
         e.preventDefault();
@@ -101,8 +105,14 @@ export default class Url extends React.Component {
                     message: ''
                 }
             });
-
             this.props.finishDataLoading();
+        });
+        ipcRenderer.on('Clipboard:paste:url', (e, url) => {
+            this.url = url;
+            if(this.testUrl()) {
+                this.props.startDataLoading();
+                ipcRenderer.send('YouTube:Info', this.url);
+            }
         });
     }
 
@@ -138,10 +148,10 @@ export default class Url extends React.Component {
                                     ))}
                                 </DropdownMenu>
                             </InputGroupButtonDropdown>
-                            <Input className="App-input" onBlur={this.onUrlChanged} placeholder="https://youtu.be/..." />
-                            <InputGroupAddon addonType="append">
+                            <Input className="App-input" onBlur={this.onUrlChanged} placeholder="Paste url here..." />
+                            {/* <InputGroupAddon addonType="append">
                                 <Button outline onClick={this.onAddClick} color="secondary">Add</Button>
-                            </InputGroupAddon>
+                            </InputGroupAddon> */}
                         </InputGroup>
                         {this.state.error.length > 0 && (
                             <div>
